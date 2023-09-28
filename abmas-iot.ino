@@ -122,25 +122,6 @@ void powerSystem(int relayMode){
 
 }
 
-
-int readTemperature() {
-  // Read the temperature from the sensor and return it
-  // Replace this with your actual temperature reading code
-  return 25;
-}
-int readpH() {
-  // Read the temperature from the sensor and return it
-  // Replace this with your actual temperature reading code
-  return 25;
-}
-int readDO() {
-  // Read the temperature from the sensor and return it
-  // Replace this with your actual temperature reading code
-  return 25;
-}
-
-float DObad = 7;
-float DOgood = 2;
 //float doConv = random(1,6);
 void getAndSendData(){
   float doConv = random(1,6);
@@ -166,29 +147,12 @@ void getAndSendData(){
   }
 
   Serial.println("Sending data to ThingsBoard:");
-  Serial.print("Salinity: ");
-  Serial.print(salinity);
-  Serial.print(" %\t");
-  Serial.print("Temperature: ");
-  Serial.print(temperature);
-  Serial.println(" *C ");
-  Serial.print("pH: ");
-  Serial.print(pH);
-  Serial.print(" %\t");
-  Serial.print("DO: ");
-  Serial.println(doConv);
-
-//  tb.sendTelemetryFloat("pH", pH);
-//  tb.sendTelemetryFloat("salinity", salinity);
-//  tb.sendTelemetryFloat("DO", doConv);
   tb.sendTelemetryFloat("Voltage_PLN", pzem_voltage);
   tb.sendTelemetryFloat("Power_PLN", pzem_power);
   tb.sendTelemetryFloat("Pf_PLN", pzem_pf);
   tb.sendTelemetryFloat("Current_PLN", pzem_current);
   tb.sendTelemetryFloat("Frekuensi_PLN", pzem_frequency);
   tb.sendTelemetryFloat("Energy_PLN", pzem_energy);
-  
-//  tb.sendTelemetryFloat("pH", pH);
 
 }
 
