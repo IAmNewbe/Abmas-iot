@@ -48,6 +48,7 @@ int status = WL_IDLE_STATUS;
 ThingsBoard tb(wifiClient);
 
 unsigned long lastSend;
+unsigned long lastOn;
 
 // We assume that all GPIOs are LOW
 boolean gpioState[] = {false, false};
@@ -122,42 +123,14 @@ void powerSystem(int relayMode){
 
 }
 
-
-int readTemperature() {
-  // Read the temperature from the sensor and return it
-  // Replace this with your actual temperature reading code
-  return 25;
-}
-int readpH() {
-  // Read the temperature from the sensor and return it
-  // Replace this with your actual temperature reading code
-  return 25;
-}
-int readDO() {
-  // Read the temperature from the sensor and return it
-  // Replace this with your actual temperature reading code
-  return 25;
-}
-
-float DObad = 7;
-float DOgood = 2;
 //float doConv = random(1,6);
 void getAndSendData(){
   float doConv = random(1,6);
    Serial.println("Collecting temperature data.");
-
   
   float salinity = random(1,100);
   float temperature = random(1,100);
   float pH = 6.8;
-
-//  if(gpioState[0] ==  false){
-//      doConv = DOgood;
-//     doConv += random(-1,2);
-//  }else {
-//    doConv = DObad;
-//    doConv += random(-1,2);
-//  }
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(salinity) || isnan(temperature) || isnan(pH) || isnan(doConv)) {
@@ -166,29 +139,13 @@ void getAndSendData(){
   }
 
   Serial.println("Sending data to ThingsBoard:");
-  Serial.print("Salinity: ");
-  Serial.print(salinity);
-  Serial.print(" %\t");
-  Serial.print("Temperature: ");
-  Serial.print(temperature);
-  Serial.println(" *C ");
-  Serial.print("pH: ");
-  Serial.print(pH);
-  Serial.print(" %\t");
-  Serial.print("DO: ");
-  Serial.println(doConv);
 
-//  tb.sendTelemetryFloat("pH", pH);
-//  tb.sendTelemetryFloat("salinity", salinity);
-//  tb.sendTelemetryFloat("DO", doConv);
   tb.sendTelemetryFloat("Voltage_PLN", pzem_voltage);
   tb.sendTelemetryFloat("Power_PLN", pzem_power);
   tb.sendTelemetryFloat("Pf_PLN", pzem_pf);
   tb.sendTelemetryFloat("Current_PLN", pzem_current);
   tb.sendTelemetryFloat("Frekuensi_PLN", pzem_frequency);
   tb.sendTelemetryFloat("Energy_PLN", pzem_energy);
-  
-//  tb.sendTelemetryFloat("pH", pH);
 
 }
 
@@ -196,14 +153,15 @@ void setup() {
   Serial.begin(115200);
   // Set output mode for all GPIO pins
   pinMode(GPIO23, OUTPUT);
-  digitalWrite(GPIO2, HIGH);
   pinMode(GPIO2, OUTPUT);
+  digitalWrite(GPIO2, HIGH);
   delay(10);
   InitWiFi();
   client.setServer( thingsboardServer, 1883 );
   client.setCallback(on_message);
 
   lastSend = 0;
+  lastOn = 0;
 }
 
 void loop() {
@@ -221,6 +179,13 @@ void loop() {
     lastSend = millis();
   }
 
+  if ( millis() - lastOn > 7200000 ) {
+    Serial.println("...............");
+    Serial.println("======== Restarting ========");
+    delay(1500);
+    ESP.restart();
+    lastOn = millis();
+  }
   
   client.loop();
 
