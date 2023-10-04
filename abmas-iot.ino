@@ -126,20 +126,12 @@ void powerSystem(int relayMode){
 //float doConv = random(1,6);
 void getAndSendData(){
   float doConv = random(1,6);
-   Serial.println("Collecting temperature data.");
   
   float salinity = random(1,100);
   float temperature = random(1,100);
   float pH = 6.8;
 
-  // Check if any reads failed and exit early (to try again).
-  if (isnan(salinity) || isnan(temperature) || isnan(pH) || isnan(doConv)) {
-    Serial.println("Failed to read from DHT sensor!");
-    return;
-  }
-
   Serial.println("Sending data to ThingsBoard:");
-
   tb.sendTelemetryFloat("Voltage_PLN", pzem_voltage);
   tb.sendTelemetryFloat("Power_PLN", pzem_power);
   tb.sendTelemetryFloat("Pf_PLN", pzem_pf);
